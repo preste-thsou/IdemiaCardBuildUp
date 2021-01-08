@@ -153,7 +153,7 @@ class WriteFrontToFileObserver(Observer):
             front_std = np.std(front_np, axis=0) 
             front_mean = np.mean(front_np, axis=0)
 
-            LOGGER.info('\n[Population]| Symmetry deviation: mean {:10.2f} - std {:10.2f} || Nb of layers : mean {:10.2f} - std {:10.2f}|\n[Front]     | Symmetry deviation : mean {:10.2f} - std {:10.2f} || nb of layers : mean {:10.2f} - std {:10.2f}|'.format(solutions_mean[0], solutions_std[0], solutions_mean[1], solutions_std[1], front_mean[0], front_std[0], front_mean[1], front_std[1]))
+            LOGGER.info('\n[Population]| Symmetry deviation : mean {:10.2f} - std {:10.2f} || Nb of layers : mean {:10.2f} - std {:10.2f}| Interaction : mean {:10.2f} - std {:10.2f}| \n[Front]     | Symmetry deviation : mean {:10.2f} - std {:10.2f} || nb of layers : mean {:10.2f} - std {:10.2f}| Interaction : mean {:10.2f} - std {:10.2f}|'.format(solutions_mean[0], solutions_std[0], solutions_mean[1], solutions_std[1], solutions_mean[2], solutions_std[2], front_mean[0], front_std[0], front_mean[1], front_std[1], front_mean[2], front_std[2]))
 
 
 class PlotFrontToFileObserver(Observer):

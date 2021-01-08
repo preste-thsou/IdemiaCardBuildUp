@@ -24,18 +24,20 @@ class TestInitialSequence(unittest.TestCase):
     def test_1(self):
         self.Settings = copy.deepcopy(problem_variables.SETTINGS)
         self.Plan = copy.deepcopy(problem_variables.PLAN)
-        sequence = utils.GenerateRandomInitialSequence(self.Settings)
+        sequence = utils.GenerateRandomInitialValidSequencev2(self.Settings)
         print(sequence)
         utils.buildPlan(self.Settings, self.Plan, sequence)
         print(self.Plan['nl'])
         print(self.Plan['c'])
         print(self.Plan['l'])
-        print(self.Plan['total_u'])
+        print(self.Plan['total_u_min'])
+        print(self.Plan['total_u_max'])
         print(self.Plan['half1_u'])
         print(self.Plan['half2_u'])
         print( utils.obj_evaluateSymmetry(self.Plan))
         print(utils.const_evaluateISOthickness(self.Settings, self.Plan))
         print(utils.const_evaluateMinStruct(self.Settings, self.Plan))
+        print(utils.obj_minimizeEinteraction(self.Settings, self.Plan))
 
 if __name__ == '__main__':
     unittest.main()

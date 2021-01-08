@@ -55,9 +55,118 @@ def plot_fronts(data_list, algos, folder, show = False):
         plt.savefig(folder+'fronts_comparison.png')
 
 
+def plot_ERT_3D(data_list, algos, folder, show=False):
+    """
+    Run time empirical cumulative density function plot for 3 objectives problem
+    """
+
+    def GeneratePoints(data_T, data_C, data_V):
+
+        x = []
+        y_T = []
+        y_C = []
+        y_V = []
+
+        for e in range(data_T.shape[0] - 1):
+            x.append(data_T[e, 0])
+            x.append(data_T[e + 1, 0])
+            x.append(data_T[e + 1, 0])
+
+            y_T.append(data_T[e, 1])
+            y_T.append(data_T[e, 1])
+            y_T.append(data_T[e + 1, 1])
+
+            y_C.append(data_C[e, 1])
+            y_C.append(data_C[e, 1])
+            y_C.append(data_C[e + 1, 1])
+
+            y_V.append(data_V[e, 1])
+            y_V.append(data_V[e, 1])
+            y_V.append(data_V[e + 1, 1])
+
+        x.append(data_T[-1, 0] + 5)
+        y_T.append(data_T[-1, 1])
+        y_C.append(data_C[-1, 1])
+        y_V.append(data_V[-1, 1])
+
+        return x, y_T, y_C, y_V
+
+    def UpadeMax(data, max_x, max_y_T, max_y_C, max_y_V):
+
+        if np.max(data[:, 0]) > max_x:
+            max_x = np.max(data[:, 0])
+
+        if np.max(data[:, 1]) > max_y_T:
+            max_y_T = np.max(data[:, 1])
+
+        if np.max(data[:, 2]) > max_y_C:
+            max_y_C = np.max(data[:, 2])
+
+        if np.max(data[:, 3]) > max_y_V:
+            max_y_V = np.max(data[:, 2])
+
+        return max_x, max_y_T, max_y_C, max_y_V
+
+    fig = plt.figure(figsize=(15, 7))
+    ax1 = fig.add_subplot(1, 3, 1)
+    ax2 = fig.add_subplot(1, 3, 2)
+    ax3 = fig.add_subplot(1 ,3 ,3)
+    max_x = 0
+    max_y_T = 0
+    max_y_C = 0
+    max_y_V = 0
+
+    for data_t, algo in zip(data_list, algos):
+        data = np.array(data_t)
+        data_T = data[:, :2]
+        data_C = data[:, [0, 2]]
+        data_V = data[:, [0, 3]]
+
+        ax1.scatter(data_T[:, 0], data_T[:, 1])
+        ax2.scatter(data_C[:, 0], data_C[:, 1])
+        ax3.scatter(data_V[:, 0], data_V[:, 1])
+
+        max_x, max_y_T, max_y_C , max_y_V = UpadeMax(data, max_x, max_y_T, max_y_C, max_y_V)
+        x, y_T, y_C ,y_V = GeneratePoints(data_T, data_C, data_V)
+
+        ax1.plot(x, y_T, label="{}".format(algo))
+        ax2.plot(x, y_C, label="{}".format(algo))
+        ax3.plot(x, y_V, label="{}".format(algo))
+
+    ax1.grid(True)
+    ax1.set_ylabel('Symmetry deviation', fontsize=20)
+    ax1.set_xlabel('Evaluation', fontsize=20)
+    ax1.legend(fontsize=15)
+    ax2.set_ylabel('Nb of layers', fontsize=20)
+    ax2.set_xlabel('Evaluation', fontsize=20)
+    ax2.grid(True)
+    ax2.legend(fontsize=15)
+    ax3.set_ylabel('interaction of elenents', fontsize=20)
+    ax3.set_xlabel('Evaluation', fontsize=20)
+    ax3.grid(True)
+    ax3.legend(fontsize=15)
+
+    st_x = int((max_x + 5) / 10)
+    st_y_T = int((max_y_T + 5) / 10)
+    st_y_C = int((max_y_C + 5) / 10)
+    st_y_V = int((max_y_V + 5)/ 10)
+    if max_x != np.inf:
+        ax1.xaxis.set_ticks(np.arange(0, max_x + 5, max(1, st_x)))
+        ax1.yaxis.set_ticks(np.arange(0, max_y_T + st_y_T + 5, max(1, st_y_T)))
+
+        ax2.xaxis.set_ticks(np.arange(0, max_x + 5, max(1, st_x)))
+        ax2.yaxis.set_ticks(np.arange(0, max_y_C + st_y_C + 5, max(1, st_y_C)))
+
+        ax3.xaxis.set_ticks(np.arange(0, max_x + 5, max(1, st_x)))
+        ax3.yaxis.set_ticks(np.arange(0, max_y_V + st_y_V + 5, max(1, st_y_V)))
+
+    if show:
+        plt.show()
+    else:
+        plt.savefig(folder + 'metaheuristic_ert_comparison.png')
 
 
-def plot_ERT(data_list, algos, folder, show = False):
+def plot_ERT_2D(data_list, algos, folder, show = False):
     """
     Run time empirical cumulative density function plot.
     """
@@ -166,6 +275,7 @@ def WritePlan(filename, solution):
     localSettings = copy.deepcopy(problem_variables.SETTINGS)
     localPlan = copy.deepcopy(problem_variables.PLAN)
     utils.buildPlan(localSettings,localPlan, solution)
+    utils.obj_minimizeEinteraction(localSettings, localPlan)
     with open(filename, "w") as of:
         of.write(str(localPlan))
 

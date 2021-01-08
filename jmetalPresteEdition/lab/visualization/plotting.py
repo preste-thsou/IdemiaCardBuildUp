@@ -4,6 +4,7 @@ from typing import TypeVar, List, Tuple
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from pandas import plotting
 
 LOGGER = logging.getLogger('jmetal')
@@ -74,9 +75,80 @@ class Plot:
 
         if dimension == 2:
             self.two_dim(solutions, front, label, filename, format)
+        elif dimension == 3:
+            self.three_dim(solutions, front, label, filename, format)
         else:
             print('Function not implemented for {} dimension problem'.format(dimension) )
 
+
+    def three_dim(self, solutions: List[list], fronts: List[list], labels: List[str] = None, filename: str = None,
+                format: str = 'eps'):
+        """ Plot any arbitrary number of fronts in 3D.
+
+        :param fronts: List of fronts (containing solutions).
+        :param labels: List of fronts title (if any).
+        :param filename: Output filename.
+        """
+
+        n = int(np.ceil(np.sqrt(len(fronts))))
+        fig = plt.figure()
+        fig.suptitle(self.plot_title, fontsize=16)
+
+        reference = None
+        if self.reference_front:
+            reference, _ = self.get_points(self.reference_front)
+
+        max_x = 0
+        max_y = 0
+        max_z = 0
+        ax = None
+
+        for i, _ in enumerate(solutions):
+            points, _ = self.get_points(solutions[i])
+
+            max_z = get_max(points.loc[:, 2])
+            max_y = get_max(points.loc[:, 1])
+            max_x = get_max(points.loc[:, 0])
+
+            ax = fig.add_subplot(n, n, i + 1, projection = '3d')
+
+            ax.scatter(points[0].to_numpy(), points[1].to_numpy(), points[2].to_numpy(), s=50, color='b', alpha=1.0, label='solution')
+
+            points, _ = self.get_points(fronts[i])
+            ax.scatter(points[0].to_numpy(), points[1].to_numpy(), points[2].to_numpy(),  s=50, color='r', alpha=1.0, label='front')
+
+
+            if labels:
+                ax.set_title(labels[i])
+
+            if self.reference_front:
+                ax.plot(reference[0].to_numpy(), reference[1].to_numpy(), reference[2].to_numpy(), color = 'k', legend = False)
+
+            if self.reference_point:
+                for point in self.reference_point:
+                    ax.plot(point[0].to_numpy(), point[1].to_numpy(), point[2].to_numpy(), marker='o', markersize=5, color='r')
+                    plt.axvline(x=point[0], color='r', linestyle=':')
+                    plt.axhline(y=point[1], color='r', linestyle=':')
+                    plt.axzline(z=point[2], color='r', linestyle=':')
+
+            if self.axis_labels:
+                ax.set_xlabel(self.axis_labels[0])
+                ax.set_ylabel(self.axis_labels[1])
+                ax.set_zlabel(self.axis_labels[2])
+
+
+        if filename:
+            if max_y != None and max_x != None and max_z != None:
+                ax.set_yticks(np.arange(0, max_y + int(max_y / 10) + 1, int(max_y / 10) + 1))
+                ax.set_xticks(np.arange(0, max_x + int(max_x / 10) + 1, int(max_x / 10) + 1))
+                ax.set_zticks(np.arange(0, max_z + int(max_z / 10) + 1, int(max_z / 10) + 1))
+                ax.set_ylim(ax.get_ylim()[::-1])
+            plt.grid(True)
+            plt.savefig(filename + '.' + format, format=format, dpi=200)
+        else:
+            plt.show()
+
+        plt.close(fig=fig)
 
     def two_dim(self, solutions: List[list], fronts: List[list], labels: List[str] = None, filename: str = None, format: str = 'eps'):
         """ Plot any arbitrary number of fronts in 2D.

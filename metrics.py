@@ -59,27 +59,30 @@ def MeanIdealDistance(front):
 	"""
 	front_np = utils.TransformSolutionToArray(front)
 	min_data, max_data = GetMaxMinObjectives(front_np)
-	f_tardiness_min, f_cost_min = min_data
-	f_tardiness_max, f_cost_max= max_data
-	f_tardiness_best, f_cost_best = f_tardiness_min, f_cost_min
+	f_symmetry_min, f_layer_min, f_interact_min = min_data
+	f_symmetry_max, f_layer_max, f_interact_max = max_data
+	f_symmetry_best, f_layer_best, f_interact_best = f_symmetry_min, f_layer_min,f_interact_min
 
 	n = front_np.shape[0]
 
-	tardiness_denominator = f_tardiness_max - f_tardiness_min
-	cost_denominator = f_cost_max - f_cost_min
+	symmetry_denominator = f_symmetry_max - f_symmetry_min
+	layer_denominator = f_layer_max - f_layer_min
+	interact_denominator = f_interact_max - f_interact_min
 
-	if tardiness_denominator == 0 and cost_denominator == 0:
+	if symmetry_denominator == 0 and layer_denominator == 0 and interact_denominator == 0:
 		rerunt = -1
 
-	if tardiness_denominator == 0:
+	if symmetry_denominator == 0:
 		tardiness_denominator = 1
 
 
-	if cost_denominator == 0:
-		cost_denominator = 1
+	if layer_denominator == 0:
+		layer_denominator = 1
 
+	if interact_denominator == 0:
+		interact_denominator = 1
 	
-	MID = np.sum( np.sqrt( ( (front_np[:,0] - f_tardiness_best)/(tardiness_denominator) )**2 + ( (front_np[:,1] - f_cost_best)/(cost_denominator) )**2 ) ) / n
+	MID = np.sum( np.sqrt( ( (front_np[:,0] - f_symmetry_best)/(symmetry_denominator) )**2 + ( (front_np[:,1] - f_layer_best)/(layer_denominator) )**2 + ( (front_np[:,1] - f_interact_best)/(interact_denominator) )**2 ) ) / n
 	return MID
 
 

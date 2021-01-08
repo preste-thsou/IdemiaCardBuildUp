@@ -24,6 +24,7 @@ R = TypeVar('R')
    :platform: Unix, Windows
    :synopsis: Implementation of SMPSO.
 
+    PresteEdition => changed back to original get_result => population is not ok +> equals to front, but previous optmimum are not lost
 .. moduleauthor:: Antonio Benítez-Hidalgo <antonio.b@uma.es>
 """
 
@@ -226,7 +227,7 @@ class SMPSO(ParticleSwarmOptimization):
 
     def get_result(self) -> List[FloatSolution]:
         #print('self.self.solutions')
-        return self.solutions
+        return self.leaders.solution_list
 
     def get_name(self) -> str:
         return 'SMPSO'

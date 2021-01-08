@@ -1,5 +1,5 @@
 from jmetal.algorithm.multiobjective import NSGAII, OMOPSO
-from jmetal.operator import SBXCrossover, PolynomialMutation, IntegerPolynomialMutation
+from jmetal.operator import SBXCrossover, NullCrossover, SPXCrossover, DifferentialEvolutionCrossover , PolynomialMutation, IntegerPolynomialMutation
 from jmetal.util.termination_criterion import StoppingByEvaluations
 from jmetal.util.archive import NonDominatedSolutionsArchive
 from jmetal.util.solution import get_non_dominated_solutions, print_function_values_to_file, print_variables_to_file
@@ -16,7 +16,7 @@ from jmetalPresteEdition.util import constraint_handling
 from problem.main_problem import MainProblem
 from problem import problem_variables
 from problem import utils
-from visualization import plot_ERT, plot_fronts, WritePlan, GetListOfSolutionsVar
+from visualization import plot_ERT_2D, plot_ERT_3D, plot_fronts, WritePlan, GetListOfSolutionsVar
 
 
 import logging
@@ -75,7 +75,7 @@ def run(problem, algorithm, result_folder, max_evaluations=1000, visualization =
 	for i, s in enumerate(listofsolution):
 		WritePlan(result_folder+'Plan_front.{}.{}.{}'.format(algorithm.get_name(), problem.get_name(),i),s)
 
-	plot_front = Plot(title='Pareto front approximation', axis_labels=['Symmetry', 'Nb of layers'])
+	plot_front = Plot(title='Pareto front approximation', axis_labels=['Symmetry', 'Nb of layers', 'Interaction'])
 	plot_front.plot(feasible_solutions, front, label='{}-{}'.format(algorithm.get_name(), problem.get_name()), filename=result_folder+'{}-{}'.format(algorithm.get_name(), problem.get_name()), format='png')
 
 	return feasible_solutions, front, ert_data, drop_rate_const1, drop_rate_const2, drop_rate_const4, end_time - start_time
@@ -231,7 +231,7 @@ def experiment(fileplan_NSGAII, fileplan_SMPSO,folder = '', seed = 1, visualizat
 			copyfile('jmetalpy.log', folder+'jmetalpy.log')
 
 	# Plot and save fronts and ERTs comparison.
-	plot_ERT(all_ert_data_list, all_algo_name_list, folder)
+	plot_ERT_3D(all_ert_data_list, all_algo_name_list, folder)
 	plot_fronts(all_front_list, all_algo_name_list, folder)
 
 	# Try to remove logfile

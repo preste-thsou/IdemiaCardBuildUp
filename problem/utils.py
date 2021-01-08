@@ -149,11 +149,12 @@ def GenerateRandomInitialValidSequencev2(Settings):
             random_sequence_e.append(laser_pc)
             _ , u = np.asarray(Settings['C_e_pc_lc_u'][e,:,laser_pc,:]== 1).nonzero()
             random_sequence_e.append(random.choice(u))
-            random_sequence_e.append(random.randrange(Settings['max_x']))
-            random_sequence_e.append(random.randrange(Settings['max_y']))
+            random_sequence_e.append(random.randrange(Settings['min_x'], Settings['max_x']-Settings['IP_e'][e][2]))
+            random_sequence_e.append(random.randrange(Settings['min_y'], Settings['max_y']-Settings['IP_e'][e][3]))
 
         buildPlan(Settings, Plan, random_sequence_e)
         if const_evaluateMinStruct(Settings, Plan) == 0 and const_evaluateISOthickness(Settings, Plan) == 0 and const_evaluateCEcomp(Settings, Plan) == 0:
+            print(counter)
             return random_sequence_e
         else:
             if counter >= 100000:
@@ -217,15 +218,19 @@ def const_evaluateCEcomp(Settings, Plan):
 
 def const_evaluateMinStruct(Settings, Plan):
     '''
-    validate constraint 2 : sufficient nb of layers of PC
+    validate constraint 2 + 3 : sufficient nb of layers of PC + no e out of boundaries
     :param Settings:
     :param Plan:
     :return:
     '''
-    if Plan['nl'] > 3:
-        return 0
-    else:
-        return 2
+    const = 0
+    if Plan['nl'] < 3:
+        const = 2
+    for e in range(Settings['len_e']):
+        if Plan['P_e'][e][0] + Plan['P_e'][e][2] > Settings['max_x'] or Plan['P_e'][e][1]+ Plan['P_e'][e][3] > Settings['max_y']:
+            const = 2
+            break
+    return const
 
 def buildPlan(Settings, Plan, sequence):
     '''
@@ -268,6 +273,68 @@ def obj_evaluteMinStruct(Settings, Plan):
     return Plan['nl']
 
 
+def computeIntersectArea(Settings, Plan, e, ee):
+    min_ex = Plan['P_e'][e][0] - Settings['r_e'][e]
+    min_eex =Plan['P_e'][ee][0] - Settings['r_e'][ee]
+    max_ex = Plan['P_e'][e][0]+ Plan['P_e'][e][2] + Settings['r_e'][e]
+    max_eex = Plan['P_e'][ee][0]+ Plan['P_e'][ee][2] + Settings['r_e'][ee]
+    min_ey = Plan['P_e'][e][1] - Settings['r_e'][e]
+    min_eey = Plan['P_e'][ee][1] - Settings['r_e'][ee]
+    max_ey = Plan['P_e'][e][1] + Plan['P_e'][e][3] + Settings['r_e'][e]
+    max_eey = Plan['P_e'][ee][1] + Plan['P_e'][ee][3] + Settings['r_e'][ee]
+
+    delta_x = 0
+    delta_y = 0
+    list_x = [min_ex, max_ex, min_eex, max_eex]
+    list_y = [min_ey, max_ey, min_eey, max_eey]
+    sortedlist_x = sorted(list_x)
+    sortedlist_y = sorted(list_y)
+
+    if sortedlist_x == list_x or sortedlist_x == [min_eex, max_eex, min_ex, max_ex] or sortedlist_y == list_y or sortedlist_y == [min_eey, max_eey, min_ey, max_ey]:
+        return 0
+    else:
+        if sortedlist_x == [min_ex, min_eex, max_ex, max_eex]:
+            delta_x = max_ex - min_eex
+        if sortedlist_x == [min_eex, min_ex, max_eex, max_ex]:
+            delta_x = max_eex - min_ex
+        if sortedlist_x == [min_ex,min_eex, max_eex, max_ex]:
+            delta_x = max_eex - min_eex
+        if sortedlist_x == [min_eex, min_ex, max_ex, max_eex]:
+            delta_x = max_ex - min_ex
+        if sortedlist_y == [min_ey, min_eey, max_ey, max_eey]:
+            delta_y = max_ey - min_eey
+        if sortedlist_y == [min_eey, min_ey, max_eey, max_ey]:
+            delta_y = max_eey - min_ey
+        if sortedlist_y == [min_ey,min_eey, max_eey, max_ey]:
+            delta_y = max_eey - min_eey
+        if sortedlist_y == [min_eey, min_ey, max_ey, max_eey]:
+            delta_y = max_ey - min_ey
+        return delta_x * delta_y
+
+
+def obj_minimizeEinteraction(Settings, Plan):
+    interact_value = 0
+    doc_surface = (Settings['max_x'] - Settings['min_x']) * (Settings['max_y'] - Settings['min_y'])
+    for e in range(Settings['len_e']):
+        for ee in range(Settings['len_e']):
+            if Settings['EX_ee'][e][ee] == 1:
+                if Settings['IP_e'][e][0] == -1:
+                    if Plan['l'][Plan['AL_e'][e]][2] == Plan['l'][Plan['AL_e'][ee]][2]:
+                        interact_value += doc_surface
+                elif Settings['dir_e'][e] == 2:
+                    interact_value += computeIntersectArea(Settings, Plan, e, ee)
+                elif Settings['dir_e'][e] == 0 and (
+                        Plan['l'][Plan['AL_e'][ee]][2] >= Plan['l'][Plan['AL_e'][e]][2] >= Plan['c'] or
+                        Plan['c'] >= Plan['l'][Plan['AL_e'][e]][2] >= Plan['l'][Plan['AL_e'][ee]][2]):
+                    interact_value += computeIntersectArea(Settings, Plan, e, ee)
+                elif Settings['dir_e'][e] == 1 and Plan['l'][Plan['AL_e'][e]][2] >= Plan['c'] and \
+                        Plan['l'][Plan['AL_e'][e]][2] >= Plan['l'][Plan['AL_e'][ee]][2]:
+                    interact_value += computeIntersectArea(Settings, Plan, e, ee)
+                elif Settings['dir_e'][e] == 1 and Plan['l'][Plan['AL_e'][e]][2] <= Plan['c'] and \
+                        Plan['l'][Plan['AL_e'][e]][2] <= Plan['l'][Plan['AL_e'][ee]][2]:
+                    interact_value += computeIntersectArea(Settings, Plan, e, ee)
+    Plan['interaction'] = interact_value
+    return interact_value
 
 def SumAByT(Plan,  Settings):
     """

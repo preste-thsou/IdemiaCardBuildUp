@@ -30,7 +30,7 @@ class MainProblem(FloatProblem):
         self.Settings = copy.deepcopy(problem_variables.SETTINGS)
         utils.CheckSettings(self.Settings)
              
-        self.number_of_objectives = 2
+        self.number_of_objectives = 3
         self.number_of_constraints = 3
 
 
@@ -48,6 +48,7 @@ class MainProblem(FloatProblem):
         self.total_rejected_const4 = 0
         self.min_l = np.inf
         self.min_symmetry = np.inf
+        self.min_interact = np.inf
         self.ert_data = []
         
         print('--Main Problem--\n')
@@ -81,7 +82,11 @@ class MainProblem(FloatProblem):
             # Calculate objectives functions
             solution.objectives[0] = utils.obj_evaluateSymmetry(Plan)
             solution.objectives[1] = utils.obj_evaluteMinStruct(self.Settings, Plan)
-            
+            solution.objectives[2] = utils.obj_minimizeEinteraction(self.Settings, Plan)
+
+            #if Plan['AL_e'][0] == Plan['AL_e'][1] and Plan['nl']==4:
+            #    print('there is one valid solution with offset and silkscreen with 4 layers where interaction value is {}'.format(Plan['interaction']))
+
             new_opt = False
             if solution.objectives[0] < self.min_symmetry:
                 self.min_symmetry = solution.objectives[0]
@@ -91,8 +96,12 @@ class MainProblem(FloatProblem):
                 self.min_l = solution.objectives[1]
                 new_opt = True
 
+            if solution.objectives[2] < self.min_interact:
+                self.min_interact = solution.objectives[2]
+                new_opt = True
+
             if new_opt:
-                self.ert_data.append((self.total_eval, self.min_symmetry, self.min_l))
+                self.ert_data.append((self.total_eval, self.min_symmetry, self.min_l, self.min_interact))
         
         return solution
 

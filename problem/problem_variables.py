@@ -111,7 +111,7 @@ SETTINGS = {
     'type_pc' : 2,
     'laser_pc' : 2,
     'list_u' : np.array([
-        50,75,100,125,150,200,250,275,300
+        50,75,100,125,150,200,250,275,350
     ]),
     'list_e' : np.array([
         0, #offsetink
@@ -149,7 +149,7 @@ SETTINGS = {
         [  # element 2 of list_e : lasinkmatrix
             [  # pc type inside
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
-                [0, 0, 0, 1, 1, 1, 0, 0, 0]  # laser non reactive
+                [0, 0, 0, 1, 1, 1, 1, 1, 1]  # laser non reactive
             ],
             [  # pc type overlay
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
@@ -200,7 +200,7 @@ SETTINGS = {
     'IP_e' : np.array([
         [-1, -1, -1, -1], #offset ink
         [-1, -1, -1, -1], #silckscreen ink
-        [570, 100, 250, 500 ], #lasink matrix fixed position (verso of the card)
+        [570, 100, 250, 300 ], #lasink matrix fixed position (verso of the card)
         [0, 0, 100, 150], #CLI
         [0, 0, 150, 150], #DOVID
         [0, 0, 150, 150], #DOVID
@@ -235,7 +235,7 @@ SETTINGS = {
         [0,0,1,0,1,1,1], #CLI
         [0,0,1,1,0,1,1], #DOVID
         [0,0,1,1,1,0,1], #DOVID
-        [0,0,1,1,1,1,0]
+        [0,0,1,1,1,1,0] #contactchip
     ]),
     'max_nl' : 10
 }
@@ -257,5 +257,6 @@ PLAN = {
     'total_u_min' :  0, #0 is an init value
     'total_u_max' : 0, #0 is an init value
     'half1_u' : 0, #0 is an init value
-    'half2_u' : 0 #0 is an init value
+    'half2_u' : 0, #0 is an init value
+    'interaction' :0
     }
