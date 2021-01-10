@@ -40,7 +40,7 @@ list_type_e  : type of security elements
 10. classical B&W engravable areas
 11. Tactile laser engravable areas
 12. DP extrudable area
-13. Etc.
+
 
 
 C_e_lc_pc_u : contains 1 if element e can be placed on layer of type
@@ -124,9 +124,10 @@ SETTINGS = {
     ]),
 
     'len_e': 7,
+    'list_type_e' : 13,
 
     'C_e_pc_lc_u': np.array([
-        [ #element 0 of list_e: offset ink
+        [ #element 0 of list__type_e: offset ink
             [ # pc type inside
                 [0, 0, 0, 0, 0, 0, 0, 0, 0], #laser reactive
                 [0, 0, 0, 1, 1, 1, 1, 1, 1]  #laser non reactive
@@ -136,7 +137,7 @@ SETTINGS = {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0] #laser non reactive
             ]
         ],
-        [  # element 1 of list_e : silkscreen ink
+        [  # element 1 of list_type_e : silkscreen ink
             [  # pc type inside
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
                 [0, 0, 0, 1, 1, 1, 1, 1, 1]  # laser non reactive
@@ -146,7 +147,7 @@ SETTINGS = {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
             ]
         ],
-        [  # element 2 of list_e : lasinkmatrix
+        [  # element 2 of list_type_e : lasinkmatrix
             [  # pc type inside
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
                 [0, 0, 0, 1, 1, 1, 1, 1, 1]  # laser non reactive
@@ -156,7 +157,7 @@ SETTINGS = {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
             ]
         ],
-        [  # element 3 of list_e: CLI
+        [  # element 3 of list_type_e: CLI
             [  # pc type inside
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
                 [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
@@ -166,7 +167,47 @@ SETTINGS = {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
             ]
         ],
-        [  # element 4 of list_e: DOVID
+        [  # element 4 of list_type_e: SLI
+            [  # pc type inside
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
+            ],
+            [  # pc type overlay
+                [1, 1, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
+            ]
+        ],
+        [  # element 5 of list_type_e: DOVID
+            [  # pc type inside
+                [1, 1, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [1, 1, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
+            ],
+            [  # pc type overlay
+                [1, 1, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [1, 1, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
+            ]
+        ],
+        [  # element 6 of list_type_e :contactless inlay + chip
+            [  # pc type inside
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [0, 1, 1, 1, 0, 0, 0, 0, 0]  # laser non reactive
+            ],
+            [  # pc type overlay
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
+            ]
+        ],
+        [  # element 7 of list_type_e :contactless dual_inlay
+            [  # pc type inside
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [0, 1, 1, 1, 0, 0, 0, 0, 0]  # laser non reactive
+            ],
+            [  # pc type overlay
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
+            ]
+        ],
+        [  # element 8 of list_type_e: contactchip
             [  # pc type inside
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
                 [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
@@ -176,7 +217,7 @@ SETTINGS = {
                 [1, 1, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
             ]
         ],
-        [  # element 5 of list_e: DOVID
+        [  # element 9 of list_type_e: dual chip
             [  # pc type inside
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
                 [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
@@ -186,7 +227,7 @@ SETTINGS = {
                 [1, 1, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
             ]
         ],
-        [  # element 6 of list_e: contactchip
+        [  # element 10 of list_type_e: classical B&W engravable area
             [  # pc type inside
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
                 [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
@@ -195,7 +236,27 @@ SETTINGS = {
                 [1, 1, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
                 [1, 1, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
             ]
-        ]
+        ],
+        [  # element 11 of list_type_e: tactile B&W engravable area
+            [  # pc type inside
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
+            ],
+            [  # pc type overlay
+                [1, 1, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
+            ]
+        ],
+        [  # element 12 of list_type_e: DP extrudable area
+            [  # pc type inside
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
+            ],
+            [  # pc type overlay
+                [1, 1, 0, 0, 0, 0, 0, 0, 0],  # laser reactive
+                [1, 1, 0, 0, 0, 0, 0, 0, 0]  # laser non reactive
+            ]
+        ],
     ]),
     'IP_e' : np.array([
         [-1, -1, -1, -1], #offset ink
@@ -210,32 +271,50 @@ SETTINGS = {
     'max_ISO_u' : 790,
     'factor_comp_min' : 0.8,
     'factor_comp_max' : 0.9,
-    'r_e': np.array([
-        0,
-        0,
+    'r_e': np.array([ #incompatibility radius of list_type_e
+        0, #offset
+        0, #silkscreen
         10, #Lasink
         10, #CLI
+        10, #SLI
         10, #DOVID
-        10, #DOVID
-        10, #contactchip
+        10, #contactless inlay + chip
+        10, #contactless dual inlay
+        10, #dual chip
+        10, #contacthip
+        0, #classical B&W engravable areas
+        0, #tactile laser engravable area
+        10, #DP extrudable area
     ]),
-    'dir_e': np.array([
-        0,
-        0,
+    'dir_e': np.array([ #incompatibilty directions of list_type_e
+        0, #offset
+        0, #silkscreen
         0, #lasink
         0, #CLI
+        0, #SLI
         0, #DOVID
-        0, #DOVID
+        2, #contactless inlay + chip
+        2, #contactless dual inlay
+        2, #dual chip
         2, #contacthip
+        1, #classical B&W engravable areas
+        1, #tactile laser engravable area
+        1 #DP extrudable area
     ]),
     'EX_ee': np.array([
-        [0,0,1,1,1,1,1], #offset
-        [0,0,1,1,1,1,1], #silkscreen
-        [0,0,0,1,1,1,1], #lasink
-        [0,0,1,0,1,1,1], #CLI
-        [0,0,1,1,0,1,1], #DOVID
-        [0,0,1,1,1,0,1], #DOVID
-        [0,0,1,1,1,1,0] #contactchip
+        [0,0,1,1,1,1,1,1,1,1,1,1,1], #offset
+        [0,0,1,1,1,1,1,1,1,1,1,1,1], #silkscreen
+        [0,0,1,1,1,1,1,1,1,1,1,1,1], #lasink
+        [0,0,1,1,1,1,1,1,1,1,1,1,1], #CLI
+        [0,0,1,1,1,1,1,1,1,1,1,1,1], #SLI
+        [0,0,0,1,1,1,1,1,1,1,1,1,1], #DOVID
+        [0,0,0,1,1,0,1,1,1,1,1,1,1], #ctl inlay + chip
+        [0,0,0,1,1,0,1,1,0,1,1,1,1], #ctl dual inlay
+        [0,0,0,1,1,1,1,0,1,1,1,1,1], #dual chip
+        [0,0,1,1,1,1,1,1,1,1,1,1,1], #contact chip
+        [0,0,0,1,1,0,1,1,1,1,1,1,1], #classical B&W engravable areas
+        [0,0,0,1,1,0,1,1,1,1,1,1,1], #tactile laser engravable areas
+        [0,0,0,1,1,1,1,1,1,1,1,1,1]
     ]),
     'max_nl' : 10
 }
