@@ -16,8 +16,8 @@ from jmetalPresteEdition.util import constraint_handling
 from problem.main_problem import MainProblem
 from problem import problem_variables
 from problem import utils
-from visualization import plot_ERT_2D, plot_ERT_3D, plot_fronts, WritePlan, GetListOfSolutionsVar
-
+from visualization import plot_ERT_2D, plot_ERT_3D, plot_fronts_3D, WritePlan, GetListOfSolutionsVar
+from plot_timeplan import plotDocScheme, plotHalfsDocScheme, plotLayerScheme
 
 import logging
 import argparse
@@ -74,6 +74,10 @@ def run(problem, algorithm, result_folder, max_evaluations=1000, visualization =
 	listofsolution = GetListOfSolutionsVar(result_folder+'VAR_front.{}.{}'.format(algorithm.get_name(), problem.get_name()))
 	for i, s in enumerate(listofsolution):
 		WritePlan(result_folder+'Plan_front.{}.{}.{}'.format(algorithm.get_name(), problem.get_name(),i),s)
+		plotDocScheme(result_folder+'Doc_scheme.{}.{}.{}.png'.format(algorithm.get_name(), problem.get_name(),i),s)
+		plotHalfsDocScheme(result_folder+'Dochalfs_scheme.{}.{}.{}.png'.format(algorithm.get_name(), problem.get_name(),i),s)
+		plotLayerScheme(result_folder+'Doc_layer_scheme.{}.{}.{}.png'.format(algorithm.get_name(), problem.get_name(),i),s)
+
 
 	plot_front = Plot(title='Pareto front approximation', axis_labels=['Symmetry', 'Nb of layers', 'Interaction'])
 	plot_front.plot(feasible_solutions, front, label='{}-{}'.format(algorithm.get_name(), problem.get_name()), filename=result_folder+'{}-{}'.format(algorithm.get_name(), problem.get_name()), format='png')
@@ -95,7 +99,7 @@ def experiment(fileplan_NSGAII, fileplan_SMPSO,folder = '', seed = 1, visualizat
 
 		if len(NSGAII_exp_plan.shape)== 1:
 			if NSGAII_exp_plan.shape[0] != 0:
-				NSGAII_exp_plan = NSGAII_exp_plan.reshape((1,8))
+				NSGAII_exp_plan = NSGAII_exp_plan.reshape((1,9))
 			else:
 				no_NSGAII = True
 
@@ -232,7 +236,7 @@ def experiment(fileplan_NSGAII, fileplan_SMPSO,folder = '', seed = 1, visualizat
 
 	# Plot and save fronts and ERTs comparison.
 	plot_ERT_3D(all_ert_data_list, all_algo_name_list, folder)
-	plot_fronts(all_front_list, all_algo_name_list, folder)
+	plot_fronts_3D(all_front_list, all_algo_name_list, folder)
 
 	# Try to remove logfile
 	try:

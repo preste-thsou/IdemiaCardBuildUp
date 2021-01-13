@@ -6,48 +6,73 @@ import json
 from problem import utils, problem_variables
 
 
-def plot_fronts(data_list, algos, folder, show = False):
+def plot_fronts_3D(data_list, algos, folder, show = False):
     
-    def UpadeMax(data, max_x_T, max_y_C):
+    def UpadeMax(data, max_T, max_C, max_V):
 
-        if np.max(data[:,0]) > max_x_T:
-            max_x_T = np.max(data[:,0])
+        if np.max(data[:,0]) > max_T:
+            max_T = np.max(data[:,0])
 
-        if np.max(data[:,1]) > max_y_C:
-            max_y_C = np.max(data[:,1])
+        if np.max(data[:,1]) > max_C:
+            max_C = np.max(data[:,1])
 
-        return max_x_T, max_y_C
+        if np.max(data[:, 2]) > max_V:
+            max_V = np.max(data[:, 2])
+
+        return max_T, max_C, max_V
 
 
-    fig = plt.figure(figsize = (15,7))
-    ax = fig.add_subplot(1, 1, 1)
+    fig = plt.figure(figsize = (20,7))
+    ax1 = fig.add_subplot(1, 3, 1)
+    ax2 = fig.add_subplot(1, 3, 2)
+    ax3 = fig.add_subplot(1 ,3 ,3)
     
-    max_x_T = 0
-    max_y_C = 0
+    max_T = 0
+    max_C = 0
+    max_V = 0
 
     for data_t, algo in zip(data_list, algos):
         data = utils.TransformSolutionToArray(data_t)
         data_T = data[:,0]
         data_C = data[:,1]
+        data_V = data[:,2]
 
-        ax.scatter(data_T, data_C,  s = 200, alpha = 0.7, label = "{}".format(algo))
+        ax1.scatter(data_T, data_C,  s = 200, alpha = 0.7, label = "{}".format(algo))
+        ax2.scatter(data_V, data_T, s= 200, alpha= 0.7, label = "{}".format(algo))
+        ax3.scatter(data_V, data_C, s = 200, alpha = 0.7, label = "{}".format(algo))
 
-        max_x_T, max_y_C = UpadeMax(data, max_x_T, max_y_C)
+        max_T, max_C, max_V = UpadeMax(data, max_T, max_C, max_V)
 
 
 
-    ax.grid(True)
-    ax.set_ylabel('Nb of layers', fontsize=20)
-    ax.set_xlabel('Symmetry deviation', fontsize=20)
-    ax.legend(fontsize = 15)
+    ax1.grid(True)
+    ax1.set_ylabel('Nb of layers', fontsize=20)
+    ax1.set_xlabel('Symmetry deviation', fontsize=20)
+    ax1.legend(fontsize = 15)
    
 
-    st_x_T = int( (max_x_T + 5) / 10 )
-    st_y_C = int( (max_y_C + 5) / 10 )
-    
+    st_T = int( (max_T + 5) / 10 )
+    st_C = int( (max_C + 5) / 10 )
+    st_V = int( (max_V + 5) / 5 )
 
-    ax.xaxis.set_ticks(np.arange(0, max_x_T + st_x_T + 5, max(1,st_x_T)))
-    ax.yaxis.set_ticks(np.arange(0, max_y_C + st_y_C + 5, max(1,st_y_C)))
+    ax1.xaxis.set_ticks(np.arange(0, max_T + st_T + 5, max(1,st_T)))
+    ax1.yaxis.set_ticks(np.arange(0, max_C + st_C + 5, max(1,st_C)))
+
+    ax2.grid(True)
+    ax2.set_ylabel('Symmetry deviation', fontsize=20)
+    ax2.set_xlabel('Surface of interaction', fontsize=20)
+    ax2.legend(fontsize=15)
+
+    ax2.xaxis.set_ticks(np.arange(0, max_V + st_V + 5, max(1, st_V)))
+    ax2.yaxis.set_ticks(np.arange(0, max_T + st_T + 5, max(1, st_T)))
+
+    ax3.grid(True)
+    ax3.set_ylabel('Nb of layers', fontsize=20)
+    ax3.set_xlabel('Surface of interaction', fontsize=20)
+    ax3.legend(fontsize=15)
+
+    ax3.xaxis.set_ticks(np.arange(0, max_V + st_V + 5, max(1, st_V)))
+    ax3.yaxis.set_ticks(np.arange(0, max_C + st_C + 5, max(1, st_C)))
 
     if show:
         plt.show()
@@ -103,7 +128,7 @@ def plot_ERT_3D(data_list, algos, folder, show=False):
             max_y_C = np.max(data[:, 2])
 
         if np.max(data[:, 3]) > max_y_V:
-            max_y_V = np.max(data[:, 2])
+            max_y_V = np.max(data[:, 3])
 
         return max_x, max_y_T, max_y_C, max_y_V
 

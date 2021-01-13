@@ -161,15 +161,20 @@ def GenerateRandomInitialValidSequencev2(Settings):
             random_sequence_e.append(laser_pc)
             _ , u = np.asarray(Settings['C_e_pc_lc_u'][type_e,:,laser_pc,:]== 1).nonzero()
             random_sequence_e.append(random.choice(u))
-            random_sequence_e.append(random.randrange(Settings['min_x'], Settings['max_x']-Settings['IP_e'][e][2]))
-            random_sequence_e.append(random.randrange(Settings['min_y'], Settings['max_y']-Settings['IP_e'][e][3]))
-
+            try:
+                random_sequence_e.append(random.randrange(Settings['min_x'], Settings['max_x']-Settings['IP_e'][e][2]))
+            except ValueError:
+                random_sequence_e.append(Settings['min_x'])
+            try:
+                random_sequence_e.append(random.randrange(Settings['min_y'], Settings['max_y']-Settings['IP_e'][e][3]))
+            except ValueError:
+                random_sequence_e.append(Settings['min_y'])
         buildPlan(Settings, Plan, random_sequence_e)
         if const_evaluateMinStruct(Settings, Plan) == 0 and const_evaluateISOthickness(Settings, Plan) == 0 and const_evaluateCEcomp(Settings, Plan) == 0:
             print(counter)
             return random_sequence_e
         else:
-            if counter >= 100000:
+            if counter >= 200000:
                 raise RuntimeError("not possible to generate one valid solution")
 
 
@@ -348,7 +353,4 @@ def obj_minimizeEinteraction(Settings, Plan):
                         Plan['l'][Plan['AL_e'][e]][2] <= Plan['l'][Plan['AL_e'][ee]][2]:
                     interact_value += computeIntersectArea(Settings, Plan, e, ee)
     Plan['interaction'] = interact_value
-    if 185599 < interact_value < 185601 :
-        print("I'm here")
-        pass
     return interact_value
